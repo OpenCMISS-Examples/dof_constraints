@@ -31,25 +31,31 @@ equationsSetUserNumber = 1
     sourceFieldUserNumber) = range(1, 6)
 problemUserNumber = 1
 
+
+worldRegion = iron.Region()
+iron.Context.WorldRegionGet(worldRegion)
+
 # Get the number of computational nodes and this computational node number
-numberOfComputationalNodes = iron.ComputationalNumberOfNodesGet()
-computationalNodeNumber = iron.ComputationalNodeNumberGet()
+computationEnvironment = iron.ComputationEnvironment()
+iron.Context.ComputationEnvironmentGet(computationEnvironment)
+numberOfComputationalNodes = computationEnvironment.NumberOfWorldNodesGet()
+computationalNodeNumber = computationEnvironment.WorldNodeNumberGet()
 
 # Create a 3D rectangular cartesian coordinate system
 coordinateSystem = iron.CoordinateSystem()
-coordinateSystem.CreateStart(coordinateSystemUserNumber)
+coordinateSystem.CreateStart(coordinateSystemUserNumber,iron.Context)
 coordinateSystem.CreateFinish()
 
 # Create a region and assign the coordinate system to the region
 region = iron.Region()
-region.CreateStart(regionUserNumber, iron.WorldRegion)
+region.CreateStart(regionUserNumber, worldRegion)
 region.LabelSet("Region")
 region.CoordinateSystemSet(coordinateSystem)
 region.CreateFinish()
 
 # Define basis
 basis = iron.Basis()
-basis.CreateStart(basisUserNumber)
+basis.CreateStart(basisUserNumber,iron.Context)
 basis.NumberOfXiSet(numberOfXi)
 basis.InterpolationXiSet([
         iron.BasisInterpolationSpecifications.LINEAR_LAGRANGE] * numberOfXi)
@@ -145,7 +151,7 @@ problem = iron.Problem()
 problemSpecification = [iron.ProblemClasses.ELASTICITY,
         iron.ProblemTypes.FINITE_ELASTICITY,
         iron.ProblemSubtypes.NONE]
-problem.CreateStart(problemUserNumber, problemSpecification)
+problem.CreateStart(problemUserNumber,iron.Context,problemSpecification)
 problem.CreateFinish()
 
 # Create the problem control loop
